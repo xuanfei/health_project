@@ -27,7 +27,7 @@
                 <div class="box">
                     <div class="filter-container">
                         <el-input placeholder="项目编码/项目名称" v-model="pagination.queryString" style="width: 200px;" class="filter-item"></el-input>
-                        <el-button @click="findPage()" class="dalfBut">查询</el-button>
+                        <el-button @click="findPage1()" class="dalfBut">查询</el-button>
                         <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
                     </div>
                     <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
@@ -225,31 +225,124 @@
             },
             //钩子函数，VUE对象初始化完成后自动执行
             created() {
+                this.findPage();
             },
             methods: {
                 //编辑
                 handleEdit() {
+                    this.$refs['dataEditForm'].validate((valid) => {
+                        if (valid) {
+                            axios.post("/checkitem/edit.do", this.formData).then((res) => {
+                                this.dialogFormVisible4Edit = false;
+                                if (res.data.flag) {
+                                    this.$message({
+                                        message:res.data.message,
+                                        type:'success'
+                                    });
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            }).finally(() => {
+                                this.findPage();
+                            });
+                        } else {
+                            this.$message.error("表单校验失败");
+                            return false;
+                        }
+                    });
                 },
                 //添加
                 handleAdd () {
+                    //校验表单输入项是否合法
+                    this.$refs['dataAddForm'].validate((valid) => {
+                        if (valid) {
+                            //表单数据校验通过，发送ajax请求将表单数据提交到后台
+                            axios.post("/checkitem/add.do", this.formData).then((res) => {
+                                //隐藏新增窗口
+                                this.dialogFormVisible = false;
+                                //判断后台返回的flag值，true表示添加操作成功，false为添加操作失败
+                                if (res.data.flag) {
+                                    this.$message({
+                                        message:res.data.message,
+                                        type:'success'
+                                    });
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            }).finally(() => {
+                                this.findPage();
+                            });
+                        } else {
+                            this.$message.error("表单校验失败");
+                            return false;
+                        }
+                    });
+                },
+
+                // 专为查询按钮准备的查询方法，解决"查不到数据"的问题
+                findPage1() {
+                    this.pagination.currentPage = 1;
+                    this.findPage();
                 },
                 //分页查询
                 findPage() {
+                    var param = {
+                        currentPage:this.pagination.currentPage,//页码
+                        pageSize:this.pagination.pageSize,//每页显示的记录数
+                        queryString:this.pagination.queryString//查询条件
+                    };
+                    axios.post("/checkitem/findPage.do", param).then((res) => {
+                        //为模型数据赋值，基于VUE的双向绑定展示到页面
+                        this.pagination.total = res.data.total;
+                        this.dataList = res.data.rows;
+                    })
                 },
                 // 重置表单
                 resetForm() {
+                    this.formData = {};
                 },
                 // 弹出添加窗口
                 handleCreate() {
+                    this.resetForm();
+                    this.dialogFormVisible = true
                 },
                 // 弹出编辑窗口
                 handleUpdate(row) {
+                    //发送请求,用id获取结果集回显在页面中的formData中
+                    axios.get("/checkitem/findById.do?id=" + row.id).then((res) => {
+                        if (res.data.flag) {
+                            this.dialogFormVisible4Edit = true;
+                            //为模型数据设置值，基于VUE双向数据绑定回显到页面
+                            this.formData = res.data.data;
+                        } else {
+                            this.$message.error("获取数据失败，请刷新当前页面");
+                        }
+                    })
                 },
                 //切换页码
                 handleCurrentChange(currentPage) {
+                    this.pagination.currentPage = currentPage;
+                    this.findPage()
                 },
                 // 删除
                 handleDelete(row) {
+                    this.$confirm("确认删除这条信息吗？","提示",{type:'warning'}).then(() => {
+                        //点击确定按钮时只需此处代码
+                        axios.get("/checkitem/delete.do?id=" + row.id).then((res) => {
+                            if (!res.data.flag) {
+                                // error
+                                this.$message.error(res.data.message);
+                            } else {
+                                // done
+                                this.$message({
+                                    message:res.data.message,
+                                    type:'success'
+                                });
+                                // 刷新页面
+                                this.findPage();
+                            }
+                        });
+                    });
                 }
             }
         })
