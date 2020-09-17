@@ -62,4 +62,9 @@
         </set>
         where id = #{id}
     </update>
+
+    <!--查询所有-->
+    <select id="findAll" resultType="com.itheima.pojo.CheckItem">
+        select * from t_checkitem
+    </select>
 </mapper>

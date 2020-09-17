@@ -11,6 +11,8 @@ import com.itheima.service.CheckItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * 检查项服务实现
  */
@@ -61,5 +63,10 @@ public class CheckItemServiceImpl implements CheckItemService {
     @Override
     public void edit(CheckItem checkItem) {
         checkItemDao.edit(checkItem);
+    }
+
+    @Override
+    public List<CheckItem> findAll() {
+        return checkItemDao.findAll();
     }
 }

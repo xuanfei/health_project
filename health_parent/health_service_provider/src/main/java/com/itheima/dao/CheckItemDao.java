@@ -4,6 +4,8 @@ import com.github.pagehelper.Page;
 import com.itheima.entity.QueryPageBean;
 import com.itheima.pojo.CheckItem;
 
+import java.util.List;
+
 /**
  * 检查项数据持久层接口
  */
@@ -26,4 +28,6 @@ public interface CheckItemDao {
 
     // update
     void edit(CheckItem checkItem);
+
+    List<CheckItem> findAll();
 }
