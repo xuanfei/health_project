@@ -12,21 +12,23 @@ import java.util.Map;
  * 检查组数据持久层接口
  */
 public interface CheckGroupDao {
+
     void add(CheckGroup checkGroup);
 
-    // 重建关系
     void setCheckGroupAndCheckItem(HashMap<String, Integer> map);
+
+    void deleteAssoication(Integer id);
+
+    void deleteByGroupId(Integer id);
 
     Page<CheckGroup> selectByCondition(String queryString);
 
-//    <!--根据id查询检查组-->
     CheckGroup findById(Integer id);
 
     List<Integer> findCheckitemIdsByCheckGroupId(Integer id);
 
     void edit(CheckGroup checkGroup);
 
-    void deleteAssoication(Integer id);
+    List<CheckGroup> findAll();
 
-    void deleteByGroupId(Integer checkGroupId);
 }

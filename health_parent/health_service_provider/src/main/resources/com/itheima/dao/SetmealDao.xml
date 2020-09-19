@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.dao.SetmealDao">
+    <!--添加套餐-->
+    <insert id="add" parameterType="com.itheima.pojo.Setmeal">
+        <!--通过mybatis框架提供的selectKey标签获得自增产生的id值-->
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            <!--返回插入的那条记录在表中自增的那个字段的值-->
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_setmeal(name,code,helpCode,sex,age,price,remark,attention,img)
+        values
+        (#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+    </insert>
+
+    <update id="setSetmealAndCheckGroup" parameterType="map">
+        insert into t_setmeal_checkgroup(setmeal_id,checkgroup_id)
+        values
+        (#{setmealId},#{checkgroupId})
+    </update>
+
+    <update id="edit" parameterType="com.itheima.pojo.Setmeal">
+        update t_setmeal
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="helpCode != null">
+                helpCode = #{helpCode},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="attention != null">
+                attention = #{attention},
+            </if>
+            <if test="img != null">
+                img = #{img},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAssoication" parameterType="int">
+        delete from t_setmeal_checkgroup where setmeal_id=#{id}
+    </delete>
+
+    <delete id="deleteById" parameterType="int">
+        delete from t_setmeal where id=#{id}
+    </delete>
+
+    <select id="selectByCondition" resultType="com.itheima.pojo.Setmeal" parameterType="string">
+        select * from t_setmeal
+        <if test="value != null and value != '' and value.length > 0">
+            where code = #{value} or name = #{value} or helpCode = #{value}
+        </if>
+    </select>
+
+    <select id="findById" parameterType="int" resultType="com.itheima.pojo.Setmeal">
+        select * from t_setmeal where id=#{id}
+    </select>
+
+    <select id="findCheckGroupIdsBySetMealId" resultType="java.lang.Integer">
+        select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id}
+    </select>
+</mapper>

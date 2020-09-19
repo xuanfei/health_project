@@ -39,6 +39,10 @@
         select checkitem_id from t_checkgroup_checkitem where checkgroup_id=#{id}
     </select>
 
+    <select id="findAll" resultType="com.itheima.pojo.CheckGroup">
+        select * from t_checkgroup
+    </select>
+
     <!--根据id动态修改检查组相关字段-->
     <update id="edit" parameterType="com.itheima.pojo.CheckGroup">
         update t_checkgroup
@@ -71,6 +75,6 @@
     </delete>
 
     <delete id="deleteByGroupId" parameterType="int">
-        delete from t_checkgroup where id=#{checkGroupId}
+        delete from t_checkgroup where id=#{id}
     </delete>
 </mapper>

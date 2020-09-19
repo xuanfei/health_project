@@ -18,76 +18,79 @@ import java.util.List;
 /**
  * 体检检查组控制
  */
-@RequestMapping("/checkgroup")
 @RestController
+@RequestMapping("/checkgroup")
 public class CheckGroupController {
 
     @Reference
     private CheckGroupService checkGroupService;
 
-    // 新增功能
     @RequestMapping("/add")
     public Result add(@RequestBody CheckGroup checkGroup, Integer[] checkitemIds) {
         try {
-            checkGroupService.add(checkGroup,checkitemIds);
+            checkGroupService.add(checkGroup, checkitemIds);
         } catch (Exception e) {
-            e.printStackTrace();
             return new Result(false, MessageConstant.ADD_CHECKGROUP_FAIL);
         }
         return new Result(true, MessageConstant.ADD_CHECKGROUP_SUCCESS);
     }
 
-    // 分页查询
-    @RequestMapping("/findPage")
-    public PageResult findPage(@RequestBody QueryPageBean queryPageBean) {
-        return checkGroupService.pageQuery(queryPageBean);
+    @RequestMapping("/delete")
+    public Result delete(Integer id) {
+        try {
+            checkGroupService.delete(id);
+        } catch (Exception e) {
+            return new Result(false, MessageConstant.DELETE_CHECKGROUP_FAIL);
+        }
+        return new Result(true, MessageConstant.DELETE_CHECKGROUP_SUCCESS);
     }
 
-    // 根据ID查询检查组
+    @RequestMapping("/findPage")
+    public PageResult findPage(@RequestBody QueryPageBean queryPageBean) {
+        return checkGroupService.findPage(queryPageBean);
+    }
+
+    // 编辑回显 form
     @RequestMapping("/findById")
     public Result findById(Integer id) {
         try {
             CheckGroup checkGroup = checkGroupService.findById(id);
-            return new Result(true, MessageConstant.QUERY_CHECKGROUP_SUCCESS,checkGroup);
+            return new Result(true, MessageConstant.QUERY_CHECKGROUP_SUCCESS, checkGroup);
         } catch (Exception e) {
-            e.printStackTrace();
             return new Result(false, MessageConstant.QUERY_CHECKGROUP_FAIL);
         }
     }
 
-    // 根据检查组id查询检查项Id
-    @RequestMapping("/findCheckitemIdsByCheckGroupId")
-    public Result findCheckitemIdsByCheckGroupId(Integer id) {
+    // 编辑回显 checkitemIds
+    @RequestMapping("/findCheckItemIdsByCheckGroupId")
+    public Result findCheckItemIdsByCheckGroupId(Integer id) {
         try {
-            List<Integer> checkitemIds = checkGroupService.findCheckitemIdsByCheckGroupId(id);
-            return new Result(true, MessageConstant.QUERY_CHECKITEM_SUCCESS,checkitemIds);
+            List<Integer> checkitemIds = checkGroupService.findCheckItemIdsByCheckGroupId(id);
+            return new Result(true, MessageConstant.QUERY_CHECKITEM_SUCCESS, checkitemIds);
         } catch (Exception e) {
-            e.printStackTrace();
             return new Result(false, MessageConstant.QUERY_CHECKITEM_FAIL);
         }
     }
 
-    // 修改检查组功能
     @RequestMapping("/edit")
     public Result edit(@RequestBody CheckGroup checkGroup, Integer[] checkitemIds) {
         try {
-            checkGroupService.edit(checkGroup,checkitemIds);
+            checkGroupService.edit(checkGroup, checkitemIds);
         } catch (Exception e) {
-            e.printStackTrace();
             return new Result(false, MessageConstant.EDIT_CHECKGROUP_FAIL);
         }
         return new Result(true, MessageConstant.EDIT_CHECKGROUP_SUCCESS);
     }
 
-    // 删除功能
-    @RequestMapping("/delete")
-    public Result delete(Integer checkGroupId) {
+    // 查询所有检查组信息
+    @RequestMapping("/findAll")
+    public Result findAll() {
         try {
-            checkGroupService.delete(checkGroupId);
+            List<CheckGroup> list = checkGroupService.findAll();
+            return new Result(true, MessageConstant.QUERY_CHECKGROUP_FAIL,list);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Result(false, MessageConstant.DELETE_CHECKGROUP_FAIL);
+            return new Result(false, MessageConstant.QUERY_CHECKGROUP_SUCCESS);
         }
-        return new Result(true, MessageConstant.DELETE_CHECKGROUP_SUCCESS);
     }
 }
