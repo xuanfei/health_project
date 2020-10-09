@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.dao.UserDao">
+    <insert id="add" parameterType="com.itheima.pojo.User">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user(birthday,gender,username,password,remark,station,telephone)
+        values
+        (#{birthday},#{gender},#{username},#{password},#{remark},#{station},#{telephone})
+    </insert>
+    <update id="setUserAndRole" parameterType="map">
+        insert into t_user_role(user_id,role_id)
+        values
+        (#{userId},#{roleIds})
+    </update>
+
+    <!--根据id动态修改检查组相关字段-->
+    <update id="edit" parameterType="com.itheima.pojo.User">
+        update t_user
+        <set>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="station != null">
+                station = #{station},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAssoication" parameterType="int">
+        delete from t_user_role where user_id=#{id}
+    </delete>
+    <delete id="deleteByUserId" parameterType="int">
+        delete from t_user where id=#{id}
+    </delete>
+
+    <select id="findByUsername" parameterType="string" resultType="com.itheima.pojo.User">
+        select * from t_user where username = #{username}
+    </select>
+
+    <select id="selectByCondition" parameterType="string" resultType="com.itheima.pojo.User">
+        select * from t_user
+        <if test="value != null and value != '' and value.length > 0">
+            where username = #{value}
+        </if>
+    </select>
+    <select id="findById" parameterType="int" resultType="com.itheima.pojo.User">
+        select * from t_user where id=#{id}
+    </select>
+    <select id="findRoleIdsByUserId" parameterType="int" resultType="int">
+        select role_id from t_user_role where user_id=#{id}
+    </select>
+</mapper>

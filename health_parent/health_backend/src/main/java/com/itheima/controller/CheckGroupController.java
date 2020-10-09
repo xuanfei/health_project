@@ -9,6 +9,7 @@ import com.itheima.pojo.CheckGroup;
 import com.itheima.pojo.CheckItem;
 import com.itheima.service.CheckGroupService;
 import com.itheima.service.CheckItemService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +37,7 @@ public class CheckGroupController {
     }
 
     @RequestMapping("/delete")
+    @PreAuthorize("hasAnyAuthority('CHECKGROUP_DELETE')")
     public Result delete(Integer id) {
         try {
             checkGroupService.delete(id);

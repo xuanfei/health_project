@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.dao.PermissionDao">
+
+    <insert id="add" parameterType="com.itheima.pojo.Permission">
+        INSERT INTO t_permission (`name`, keyword, description)
+          values (#{name}, #{keyword}, #{description})
+    </insert>
+    <update id="edit" parameterType="com.itheima.pojo.Permission">
+        update t_permission
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="keyword != null">
+                keyword = #{keyword},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteById" parameterType="int">
+        delete from t_permission where id = #{id}
+    </delete>
+
+    <!-- 根据角色id查找对应的权限-->
+    <select id="findByRoleId" parameterType="int" resultType="com.itheima.pojo.Permission">
+        SELECT p.*
+        FROM `t_permission` p, t_role_permission rp
+        where p.id = rp.permission_id AND rp.role_id = #{roleId}
+    </select>
+
+    <select id="selectByCondition" parameterType="string" resultType="com.itheima.pojo.Permission">
+        select * from t_permission
+        <if test="value != null and value.length > 0">
+            where name = #{value} or keyword = #{value}
+        </if>
+    </select>
+    <select id="findById" parameterType="int" resultType="com.itheima.pojo.Permission">
+        select * from t_permission where id=#{id}
+    </select>
+    <select id="findCountByPermission" parameterType="int" resultType="long">
+        SELECT COUNT(*) FROM `t_role_permission` WHERE permission_id=#{permission_id}
+    </select>
+    <select id="findAll" resultType="com.itheima.pojo.Permission">
+        select * from t_permission
+    </select>
+</mapper>

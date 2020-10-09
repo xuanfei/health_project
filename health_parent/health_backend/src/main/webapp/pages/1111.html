@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- 引入组件库 -->
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+</head>
+
+
+<body>
+
+<script src="//unpkg.com/vue/dist/vue.js"></script>
+<script src="//unpkg.com/element-ui@2.13.2/lib/index.js"></script>
+<div id="app">
+    <template>
+        <div class="block">
+            <span class="demonstration">默认</span>
+            <el-date-picker
+                    v-model="value1"
+                    type="monthrange"
+                    range-separator="至"
+                    start-placeholder="开始月份"
+                    end-placeholder="结束月份">
+            </el-date-picker>
+        </div>
+        <div class="block">
+            <span class="demonstration">带快捷选项</span>
+            <el-date-picker
+                    v-model="value2"
+                    type="monthrange"
+                    align="right"
+                    unlink-panels
+                    range-separator="至"
+                    start-placeholder="开始月份"
+                    end-placeholder="结束月份"
+                    :picker-options="pickerOptions">
+            </el-date-picker>
+        </div>
+    </template>
+</div>
+
+
+<!--
+
+<div id="app">
+
+    <template>
+        <div class="block">
+            <span class="demonstration">默认</span>
+            <el-date-picker
+                    v-model="value1"
+                    type="monthrange"
+                    range-separator="至"
+                    start-placeholder="开始月份"
+                    end-placeholder="结束月份">
+            </el-date-picker>
+        </div>
+        <div class="block">
+            <span class="demonstration">带快捷选项</span>
+            <el-date-picker
+                    v-model="value2"
+                    type="monthrange"
+                    align="right"
+                    unlink-panels
+                    range-separator="至"
+                    start-placeholder="开始月份"
+                    end-placeholder="结束月份"
+                    :picker-options="pickerOptions">
+            </el-date-picker>
+        </div>
+    </template>
+
+
+
+
+</div>-->
+
+</body>
+
+
+
+<script>
+
+    var Main = {
+        data() {
+            return {
+                pickerOptions: {
+                    shortcuts: [{
+                        text: '本月',
+                        onClick(picker) {
+                            picker.$emit('pick', [new Date(), new Date()]);
+                        }
+                    }, {
+                        text: '今年至今',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date(new Date().getFullYear(), 0);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近六个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setMonth(start.getMonth() - 6);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }]
+                },
+                value1: '',
+                value2: ''
+            };
+        }
+    };
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
+   /* var vue = new Vue({
+        el: '#app',
+        data:{
+            pickerOptions: {
+                shortcuts: [{
+                    text: '本月',
+                    onClick(picker) {
+                        picker.$emit('pick', [new Date(), new Date()]);
+                    }
+                }, {
+                    text: '今年至今',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date(new Date().getFullYear(), 0);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近六个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setMonth(start.getMonth() - 6);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
+            value1: '',
+            value2: ''
+        },
+
+
+
+
+    })*/
+</script>
+
+
+</html>

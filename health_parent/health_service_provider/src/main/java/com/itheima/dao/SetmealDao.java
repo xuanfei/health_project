@@ -5,6 +5,7 @@ import com.itheima.pojo.Setmeal;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface SetmealDao {
     void add(Setmeal setmeal);
@@ -22,4 +23,10 @@ public interface SetmealDao {
     void edit(Setmeal setmeal);
 
     void deleteById(Integer id);
+
+    Setmeal findSetMealAndItemById(int id);
+
+    List<Setmeal> getAllSetmeal();
+
+    List<Map<String,Object>> findSetmealCount();
 }

@@ -104,4 +104,21 @@ public class Setmeal implements Serializable {
     public void setImg(String img) {
         this.img = img;
     }
+
+    @Override
+    public String toString() {
+        return "Setmeal{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", helpCode='" + helpCode + '\'' +
+                ", sex='" + sex + '\'' +
+                ", age='" + age + '\'' +
+                ", price=" + price +
+                ", remark='" + remark + '\'' +
+                ", attention='" + attention + '\'' +
+                ", img='" + img + '\'' +
+                ", checkGroups=" + checkGroups +
+                '}';
+    }
 }

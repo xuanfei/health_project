@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://code.alibabatech.com/schema/dubbo
+						http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd
+                          http://www.springframework.org/schema/security
+                          http://www.springframework.org/schema/security/spring-security.xsd">
+    <!--开启注解方式权限控制-->
+    <security:global-method-security pre-post-annotations="enabled" />
+
+    <!--配置哪些资源可以匿名访问-->
+    <security:http security="none" pattern="/login.html"/>
+    <security:http security="none" pattern="/css/**"/>
+    <security:http security="none" pattern="/img/**"/>
+    <security:http security="none" pattern="/js/**"/>
+    <security:http security="none" pattern="/plugins/**"/>
+
+    <!--auto-config: 自动配置(例如自动产生一个登陆页面),true表示会自动应用一些配置-->
+    <!--use-expressions: 是否使用表达式描述权限, 例如: hasRole()-->
+    <security:http auto-config="true" use-expressions="true">
+        <security:headers>
+            <!--设置在页面可以通过iframe访问受保护的页面，默认为不允许访问-->
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
+        <!--pattern: 拦截的规则, /**代表拦截一切请求-->
+        <!--access: 代表拦截后的动作, hasrole代表判断是否有某个权限-->
+        <!--只要认证通过就可以访问-->
+        <security:intercept-url pattern="/pages/**" access="isAuthenticated()" />
+        <!--如果使用自定义的登陆页面，必须配置登陆表单设置-->
+        <!--页面表单提交的请求由框架来处理，无需自己创建controller处理-->
+        <!--哪个页面登陆？哪些属性提交？请求处理地址是什么？成功去哪里？失败又去哪里？-->
+        <security:form-login login-page="/login.html"
+                             username-parameter="username"
+                             password-parameter="password"
+                             login-processing-url="/login.do"
+                             default-target-url="/pages/main.html"
+                             authentication-failure-url="/login.html"/>
+        <!--
+        csrf：对应CsrfFilter过滤器
+        disabled：是否启用CsrfFilter过滤器，如果使用自定义登录页面需要关闭此项，否则登录操作会被禁用（403）
+        -->
+        <security:csrf disabled="true"/>
+
+        <!--
+          logout：退出登录
+          logout-url：退出登录操作对应的请求路径
+          logout-success-url：退出登录后的跳转页面
+          invalidate-session: 销毁session？
+        -->
+        <security:logout logout-url="/logout.do"
+                         logout-success-url="/login.html" invalidate-session="true"/>
+    </security:http>
+
+    <!--认证管理器-->
+    <security:authentication-manager>
+        <!--配置认证的提供者-->
+        <security:authentication-provider user-service-ref="springSecurityUserService">
+            <!--指定密码进行加密的对象-->
+            <security:password-encoder ref="passwordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <!--配置密码加密对象-->
+    <bean id="passwordEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+</beans>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.dao.RoleDao">
+
+    <insert id="add" parameterType="com.itheima.pojo.Role">
+        <!--通过mybatis框架提供的selectKey标签获得自增产生的id值-->
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            <!--返回插入的那条记录在表中自增的那个字段的值-->
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_role(`name`, keyword, description)
+        values
+        (#{name}, #{keyword}, #{description})
+    </insert>
+
+    <update id="setRoleAndPermission" parameterType="map">
+        insert into t_role_permission(role_id,permission_id)
+        values
+        (#{roleId},#{permissionId})
+    </update>
+
+    <update id="setRoleAndMenu" parameterType="map">
+        insert into t_role_menu(role_id,menu_id)
+        values
+        (#{roleId},#{menuId})
+    </update>
+
+    <update id="edit" parameterType="com.itheima.pojo.Role" >
+        update t_role
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="keyword != null">
+                keyword = #{keyword},
+            </if>
+
+            <if test="description != null">
+                description = #{description},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAssoication" parameterType="int">
+        delete from t_role_permission where role_id=#{id}
+    </delete>
+
+    <delete id="deleteByRoleId" parameterType="int">
+        delete from t_role where id=#{id}
+    </delete>
+    <delete id="deleteAssoicationOfMenu">
+        delete from t_role_menu where role_id=#{id}
+    </delete>
+
+    <!-- 根据用户id查找对应的关联角色-->
+    <select id="findByUserId" parameterType="int" resultType="com.itheima.pojo.Role">
+        SELECT r.*
+        FROM `t_role` r, t_user_role ur
+        where r.id = ur.role_id and user_id = #{userId};
+    </select>
+
+    <select id="selectByCondition" parameterType="string" resultType="com.itheima.pojo.Role">
+        select * from t_role
+        <if test="value != null and value != '' and value.length > 0">
+            where name = #{value} or keyword = #{value}
+        </if>
+    </select>
+
+    <select id="findById" parameterType="int" resultType="com.itheima.pojo.Role">
+        select * from t_role where id=#{id}
+    </select>
+
+    <select id="findPermissionIdsByRoleId" parameterType="int" resultType="int">
+        select permission_id from t_role_permission where role_id=#{id}
+    </select>
+
+    <select id="findMenuIdsByRoleId" parameterType="int" resultType="int">
+        select menu_id from t_role_menu where role_id=#{id}
+    </select>
+
+    <select id="findAll" resultType="com.itheima.pojo.Role">
+        select * from t_role
+    </select>
+
+</mapper>

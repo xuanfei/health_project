@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>传智健康</title>
+    <meta name="description" content="传智健康">
+    <meta name="keywords" content="传智健康">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="hold-transition">
+
+<div id="app">
+
+    <div class="content-header">
+        <h1>系统管理
+            <small>菜单管理</small>
+        </h1>
+        <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>系统管理</el-breadcrumb-item>
+            <el-breadcrumb-item>菜单管理</el-breadcrumb-item>
+        </el-breadcrumb>
+    </div>
+    <div class="app-container">
+        <div class="box">
+
+            <div class="filter-container">
+                <el-input placeholder="菜单名称" style="width: 200px;" class="filter-item"
+                          v-model="pagination.queryString"></el-input>
+                <el-button @click="findPage()" class="dalfBut">查询</el-button>
+                <el-button type="primary" class="butT" @click="handleCreate()">新建菜单</el-button>
+            </div>
+            <el-table size="small" current-row-key="id" :data="list" stripe highlight-current-row>
+                <el-table-column type="index" align="center" label="编号"></el-table-column>
+                <el-table-column prop="username" label="菜单名称" align="center"></el-table-column>
+                <el-table-column prop="gender" label="链接路径" align="center"></el-table-column>
+                <el-table-column prop="birthday" label="菜单层级" align="center"></el-table-column>
+                <el-table-column prop="telephone" label="优先级" align="center"></el-table-column>
+                <el-table-column prop="station" label="图标" align="center"></el-table-column>
+                <el-table-column prop="remark" label="描述" align="center"></el-table-column>
+                <el-table-column label="操作" align="center">
+                    <template slot-scope="scope">
+                        <el-button type="primary" size="mini" @click="handleUpdate(scope.row.id)">修改</el-button>
+                        <el-button type="danger" size="mini" @click="handleDelete(scope.row.id)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination
+                    class="pagiantion"
+                    @current-change="handleCurrentChange"
+                    :current-page="pagination.currentPage"
+                    :page-size="pagination.pageSize"
+                    layout="total, prev, pager, next, jumper"
+                    :total="pagination.total">
+            </el-pagination>
+
+
+            <div class="add-form">
+                <el-dialog title="新建菜单" :visible.sync="dialogFormVisible">
+                    <el-form ref="dataAddForm" :model="user" label-position="right" label-width="100px">
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="父菜单" prop="parentMenuId">
+                                    <el-select v-model="user.parentMenuId">
+                                        <el-option label="跟菜单" value="0"></el-option>
+                                        <el-option label="工作台" value="1"></el-option>
+                                        <el-option label="会员管理" value="2"></el-option>
+                                        <el-option label="预约设置" value="3"></el-option>
+                                        <el-option label="健康评估" value="4"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="菜单名称" prop="name">
+                                    <el-input v-model="user.name"/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="链接路径" prop="linkUrl">
+                                    <el-input v-model="user.linkUrl"/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="优先级" prop="icon">
+                                    <el-input type="number" v-model="user.priority"/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="图标">
+                                    <el-input v-model="user.icon"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="备注">
+                                    <el-input v-model="user.remark" type="textarea"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible = false">取消</el-button>
+                        <el-button type="primary" @click="addUser()">确定</el-button>
+                    </div>
+                </el-dialog>
+            </div>
+
+            <div class="edit-form">
+                <el-dialog title="编辑菜单" :visible.sync="dialogFormVisible4Edit">
+                    <el-form ref="dataEditForm" :model="user" label-position="right" label-width="100px">
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="父菜单" prop="parentMenuId">
+                                    <el-select v-model="user.parentMenuId">
+                                        <el-option label="跟菜单" value="0"></el-option>
+                                        <el-option label="工作台" value="1"></el-option>
+                                        <el-option label="会员管理" value="2"></el-option>
+                                        <el-option label="预约设置" value="3"></el-option>
+                                        <el-option label="健康评估" value="4"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="菜单名称" prop="name">
+                                    <el-input v-model="user.name"/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="链接路径" prop="linkUrl">
+                                    <el-input v-model="user.linkUrl"/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="优先级" prop="icon">
+                                    <el-input type="number" v-model="user.priority"/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="图标">
+                                    <el-input v-model="user.icon"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+                        <el-row>
+                            <el-col :span="22">
+                                <el-form-item label="备注">
+                                    <el-input v-model="user.remark" type="textarea"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible4Edit = false">取消</el-button>
+                        <el-button type="primary" @click="addUser()">确定</el-button>
+                    </div>
+                </el-dialog>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            pagination: {//分页相关模型数据
+                currentPage: 1,//当前页码
+                pageSize: 10,//每页显示的记录数
+                total: 0,//总记录数
+                queryString: null//查询条件
+            },
+            list: [],
+            user: {},
+            dialogFormVisible: false,
+            dialogFormVisible4Edit: true,
+            roleList: [],
+            roleIds: [],
+            username: []
+        },
+        mounted() {
+            this.findPage();
+        },
+        methods: {
+            handleUpdate(id) {
+                //弹出编辑窗口
+                this.dialogFormVisible4Edit = true;
+            },
+            handleCreate() {
+                this.dialogFormVisible = true;
+            },
+            addUser() {
+
+            },
+            handleAdd() {
+
+            },
+            findPage() {
+
+            },
+            handleCurrentChange(currentPage) {
+
+            },
+        }
+    })
+</script>
+</html>

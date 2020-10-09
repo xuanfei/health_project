@@ -29,23 +29,20 @@ public class OrderSettingController {
     @RequestMapping("/upload")
     public Result upload(@RequestParam("excelFile") MultipartFile excelFile) {
         try {
-            // 解析传进来的文件，数据放入集合
             List<String[]> list = POIUtils.readExcel(excelFile);
-            if (list != null && list.size() > 0) {
-                List<OrderSetting> data = new ArrayList<>();
-                for (String[] strings : list) {
-                    String orderDate = strings[0];
-                    String number = strings[1];
-                    OrderSetting orderSetting = new OrderSetting(new Date(orderDate), Integer.parseInt(number));
-                    data.add(orderSetting);
-                }
-                orderSettingService.add(data);
+            List<OrderSetting> orderSettings = new ArrayList<>();
+            for (String[] strings : list) {
+                String orderDate = strings[0];
+                String number = strings[1];
+                OrderSetting orderSetting = new OrderSetting(new Date(orderDate),Integer.parseInt(number));
+                orderSettings.add(orderSetting);
             }
+            orderSettingService.add(orderSettings);
+            return new Result(true, MessageConstant.IMPORT_ORDERSETTING_SUCCESS);
         } catch (IOException e) {
             e.printStackTrace();
             return new Result(false, MessageConstant.IMPORT_ORDERSETTING_FAIL);
         }
-        return new Result(true, MessageConstant.IMPORT_ORDERSETTING_SUCCESS);
     }
 
     @RequestMapping("/getOrderSettingByMonth")
